@@ -8,28 +8,57 @@
  *	require("postmark.php");
  *	$postmark = new Postmark("your-api-key","from-email","optional-reply-to-address");
  *
- *	if($postmark->to("receiver@example.com")->cc('ccreciever@example.com')->bcc('bccreciever@example.com')->subject("Email Subject")->plain_message("This is a plain text message.")->send()){
- *		echo "Message sent";
- *	}
+ *  $success = $postmark->to("receiver@example.com")
+ *    ->cc('ccreciever@example.com')
+ *    ->bcc('bccreciever@example.com')
+ *    ->subject("Email Subject")
+ *    ->plain_message("This is a plain text message.")
+ *    ->send();
  *
  */
 namespace li3_postmark\core;
 
 /**
- * This is a simple library for sending emails with Postmark created by Matthew Loberg (http://mloberg.com)
+ * This is a simple library for sending emails with Postmark
+ * originally created by Matthew Loberg (http://mloberg.com)
  */
 class Postmark {
 
+	/**
+	 * Holds the API Key for Postmarkapp
+	 *
+	 * @var string
+	 */
 	private $api_key;
+
+	/**
+	 * Holds the data, to be used for mailing
+	 *
+	 * @var array
+	 */
 	private $data = array();
-	
-	function __construct($apikey, $from, $reply = ''){
+
+	/**
+	 * Constructor method, takes API Key as well as $from and $reply address
+	 *
+	 * @param string $apikey API Key for Postmarkapp
+	 * @param string $from email address to send emails from
+	 * @param string $reply email address to use as reply address
+	 */
+	function __construct($apikey, $from, $reply = '') {
 		$this->api_key = $apikey;
 		$this->data["From"] = $from;
 		$this->data["ReplyTo"] = $reply;
 	}
-	
-	function send(){
+
+	/**
+	 * Sends the email to postmarkapp service
+	 *
+	 * needs curl.
+	 *
+	 * @return boolean true on success, false otherwise
+	 */
+	function send() {
 		$headers = array(
 			"Accept: application/json",
 			"Content-Type: application/json",
@@ -52,40 +81,83 @@ class Postmark {
 			return true;
 		}
 	}
-	
-	function to($to){
+
+	/**
+	 * sets to for email
+	 *
+	 * @param string $to to which this email is going to be send
+	 * @return object instance of this object
+	 */
+	function to($to) {
 		$this->data["To"] = $to;
 		return $this;
 	}
 
-	function cc($cc){
+	/**
+	 * sets cc for email
+	 *
+	 * @param string $cc to which this email is going to be send, in copy
+	 * @return object instance of this object
+	 */
+	function cc($cc) {
 		$this->data["Cc"] = $cc;
 		return $this;
 	}
 
-	function bcc($bcc){
+	/**
+	 * sets bcc for email
+	 *
+	 * @param string $bcc to which this email is going to be send blind
+	 * @return object instance of this object
+	 */
+	function bcc($bcc) {
 		$this->data["Bcc"] = $bcc;
 		return $this;
 	}
-	
-	function subject($subject){
+
+	/**
+	 * sets subject for email
+	 *
+	 * @param string $subject subject for this email
+	 * @return object instance of this object
+	 */
+	function subject($subject) {
 		$this->data["subject"] = $subject;
 		return $this;
 	}
-	
-	function html_message($body){
+
+	/**
+	 * sets html body for email
+	 *
+	 * @param string $body html content of message to be send
+	 * @return object instance of this object
+	 */
+	function html_message($body) {
 		$this->data["HtmlBody"] = "<html><body>{$body}</body></html>";
 		return $this;
 	}
-	
-	function plain_message($msg){
+
+	/**
+	 * sets plain body for email
+	 *
+	 * @param string $msg content of message to be send plaintext
+	 * @return object instance of this object
+	 */
+	function plain_message($msg) {
 		$this->data["TextBody"] = $msg;
 		return $this;
 	}
-	
-	function tag($tag){
+
+	/**
+	 * tags this email for postmarkapp
+	 *
+	 * @param string $tag tag that identifies this email within postmarkapp
+	 * @return object instance of this object
+	 */
+	function tag($tag) {
 		$this->data["Tag"] = $tag;
 		return $this;
 	}
-
 }
+
+?>
